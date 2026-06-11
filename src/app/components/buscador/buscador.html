@@ -1,38 +1,41 @@
 <div class="min-h-screen bg-[#171718] text-white p-8">
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-6xl mx-auto">
     
     <h1 class="text-3xl font-bold mb-6 text-center text-red-500">Buscador de Fórmula 1</h1>
-    
-    <div class="flex gap-2 mb-4">
+
+    <!-- Contenedor Responsive: Input y Botones -->
+    <div class="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-3xl mx-auto mb-6">
       <input 
         type="text" 
         #inputBusqueda
         placeholder="Buscar piloto (ej. Hamilton)" 
-        class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        class="w-full md:flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
         (keyup.enter)="realizarBusqueda(inputBusqueda.value)"
       >
-      <button 
-        (click)="realizarBusqueda(inputBusqueda.value)"
-        class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors"
-      >
-        Buscar
-      </button>
-      <button 
-        (click)="limpiarBusqueda(inputBusqueda)"
-        class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors"
-      >
-        Limpiar
-      </button>
-
-      <button 
-  (click)="cargarGrilla()"
-  class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors"
->
-  Pilotos Clásicos
-</button>
+      <!-- Botones adaptables: en fila en PC, apilados o estirados en celular -->
+      <div class="flex flex-wrap justify-center gap-2 w-full md:w-auto">
+        <button 
+          (click)="realizarBusqueda(inputBusqueda.value)"
+          class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors w-full sm:w-auto"
+        >
+          Buscar
+        </button>
+        <button 
+          (click)="limpiarBusqueda(inputBusqueda)"
+          class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors w-full sm:w-auto"
+        >
+          Limpiar
+        </button>
+        <button 
+          (click)="cargarGrilla()"
+          class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors w-full sm:w-auto"
+        >
+          Pilotos Clásicos
+        </button>
+      </div>
     </div>
 
-    <div class="flex flex-wrap gap-3 mb-8 justify-center">
+    <div class="flex flex-wrap gap-3 mb-8 justify-center max-w-3xl mx-auto">
       <span class="text-sm text-gray-400 self-center">Populares:</span>
       <button (click)="inputBusqueda.value = 'Colapinto'; realizarBusqueda('Colapinto')" class="px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-full text-sm hover:bg-gray-700 hover:border-red-500 text-gray-300 transition-all">
         🇦🇷 Colapinto
@@ -51,14 +54,15 @@
       </p>
     </div>
 
-    <div *ngIf="pilotos().length > 1 && !cargando()" class="flex justify-end mb-4">
+    <!-- Resultados limitados en ancho para que la tarjeta no sea gigante -->
+    <div *ngIf="pilotos().length > 1 && !cargando()" class="flex justify-end mb-4 max-w-3xl mx-auto">
       <button (click)="alternarOrden()" class="px-4 py-2 bg-gray-800 border border-gray-700 hover:bg-gray-600 text-sm text-gray-300 rounded-md transition-colors flex items-center gap-2">
         <span *ngIf="ordenAscendente()">⬇️ Ordenar A-Z</span>
         <span *ngIf="!ordenAscendente()">⬆️ Ordenar Z-A</span>
       </button>
     </div>
 
-    <div *ngIf="pilotos().length > 0 && !cargando()" class="grid gap-4">
+    <div *ngIf="pilotos().length > 0 && !cargando()" class="grid gap-4 max-w-3xl mx-auto">
       <div *ngFor="let piloto of pilotos()">
         
         <section hlmCard class="bg-gray-800/50 border border-gray-700 shadow-xl rounded-xl p-6">
@@ -96,16 +100,20 @@
       No hay pilotos para mostrar. Escribí un apellido arriba.
     </div>
 
-    <div *ngIf="grilla().length > 0 && !cargando()" class="mt-12">
-  <h2 class="text-2xl font-bold text-center mb-6 text-gray-400">Grilla de Clásicos</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div *ngFor="let piloto of grilla(); let i = index" 
-        class="flex items-center p-3 bg-gray-900 border-l-4 border-red-500 rounded-r-lg">
-      <span class="text-2xl font-black text-gray-600 mr-4 w-10">{{ i + 1 }}</span>
-      <div class="flex-1">
-        <p class="font-bold text-white">{{ piloto.name }} {{ piloto.surname }}</p>
-        <p class="text-xs text-red-400">{{ piloto.nationality }}</p>
+    <!-- Grilla Responsive -->
+    <div *ngIf="grilla().length > 0 && !cargando()" class="mt-12 w-full">
+      <h2 class="text-2xl font-bold text-center mb-6 text-gray-400">Grilla de Clásicos</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div *ngFor="let piloto of grilla(); let i = index" 
+            class="flex items-center p-3 bg-gray-900 border-l-4 border-red-500 rounded-r-lg">
+          <span class="text-2xl font-black text-gray-600 mr-4 w-10">{{ i + 1 }}</span>
+          <div class="flex-1">
+            <p class="font-bold text-white truncate">{{ piloto.name }} {{ piloto.surname }}</p>
+            <p class="text-xs text-red-400">{{ piloto.nationality }}</p>
+          </div>
+        </div>
       </div>
     </div>
+    
   </div>
 </div>
