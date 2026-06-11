@@ -14,8 +14,8 @@ import { HlmCardImports } from '../../../../spartan/card/src';
   styleUrl: './buscador.css'
 })
 export class Buscador {
-  private f1Service = inject(F1);
-  
+  private f1Service = inject(F1); // Inyectamos el servicio F1
+
   pilotos = signal<any[]>([]);
   cargando = signal<boolean>(false); 
   ordenAscendente = signal<boolean>(true);
@@ -26,8 +26,8 @@ export class Buscador {
     
     this.cargando.set(true);
     this.pilotos.set([]);
-    this.grilla.set([]);
-    this.ordenAscendente.set(true);
+    this.grilla.set([]); // Limpia la grilla
+    this.ordenAscendente.set(true); // Ordena alfabéticamente 
 
     this.f1Service.buscarPilotos(termino).subscribe({
       next: (datos) => {
@@ -45,7 +45,7 @@ export class Buscador {
     });
   }
 
-  limpiarBusqueda(input: HTMLInputElement) {
+  limpiarBusqueda(input: HTMLInputElement) {   // Resetea y vacia el input de búsqueda
     input.value = ''; 
     this.pilotos.set([]); 
     this.grilla.set([]);
@@ -53,7 +53,7 @@ export class Buscador {
   }
 
   alternarOrden() {
-    this.ordenAscendente.set(!this.ordenAscendente());
+    this.ordenAscendente.set(!this.ordenAscendente());  // Invierte el orden actual de la lista mostrada (A-Z / Z-A)
     const pilotosActuales = [...this.pilotos()];
     
     pilotosActuales.sort((a, b) => {

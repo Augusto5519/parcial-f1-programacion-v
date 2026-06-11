@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { Buscador } from './components/buscador/buscador';
+import { Buscador } from './components/buscador/buscador'; // Importamos el componente principal
 
 @Component({
   selector: 'app-root',
-  imports: [Buscador],
+  imports: [Buscador],   // Importamos el buscador para que sea lo primero que se muestre en la pantalla
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
