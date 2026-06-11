@@ -1,0 +1,111 @@
+<div class="min-h-screen bg-[#171718] text-white p-8">
+  <div class="max-w-2xl mx-auto">
+    
+    <h1 class="text-3xl font-bold mb-6 text-center text-red-500">Buscador de Fórmula 1</h1>
+    
+    <div class="flex gap-2 mb-4">
+      <input 
+        type="text" 
+        #inputBusqueda
+        placeholder="Buscar piloto (ej. Hamilton)" 
+        class="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        (keyup.enter)="realizarBusqueda(inputBusqueda.value)"
+      >
+      <button 
+        (click)="realizarBusqueda(inputBusqueda.value)"
+        class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md transition-colors"
+      >
+        Buscar
+      </button>
+      <button 
+        (click)="limpiarBusqueda(inputBusqueda)"
+        class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors"
+      >
+        Limpiar
+      </button>
+
+      <button 
+  (click)="cargarGrilla()"
+  class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors"
+>
+  Pilotos Clásicos
+</button>
+    </div>
+
+    <div class="flex flex-wrap gap-3 mb-8 justify-center">
+      <span class="text-sm text-gray-400 self-center">Populares:</span>
+      <button (click)="inputBusqueda.value = 'Colapinto'; realizarBusqueda('Colapinto')" class="px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-full text-sm hover:bg-gray-700 hover:border-red-500 text-gray-300 transition-all">
+        🇦🇷 Colapinto
+      </button>
+      <button (click)="inputBusqueda.value = 'Hamilton'; realizarBusqueda('Hamilton')" class="px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-full text-sm hover:bg-gray-700 hover:border-red-500 text-gray-300 transition-all">
+        🇬🇧 Hamilton
+      </button>
+      <button (click)="inputBusqueda.value = 'Schumacher'; realizarBusqueda('Schumacher')" class="px-3 py-1 bg-gray-800/50 border border-gray-700 rounded-full text-sm hover:bg-gray-700 hover:border-red-500 text-gray-300 transition-all">
+        🇩🇪 Schumacher
+      </button>
+    </div>
+
+    <div *ngIf="cargando()" class="text-center mt-10">
+      <p class="text-xl text-red-500 font-semibold animate-pulse">
+        🏎️ Buscando piloto en boxes...
+      </p>
+    </div>
+
+    <div *ngIf="pilotos().length > 1 && !cargando()" class="flex justify-end mb-4">
+      <button (click)="alternarOrden()" class="px-4 py-2 bg-gray-800 border border-gray-700 hover:bg-gray-600 text-sm text-gray-300 rounded-md transition-colors flex items-center gap-2">
+        <span *ngIf="ordenAscendente()">⬇️ Ordenar A-Z</span>
+        <span *ngIf="!ordenAscendente()">⬆️ Ordenar Z-A</span>
+      </button>
+    </div>
+
+    <div *ngIf="pilotos().length > 0 && !cargando()" class="grid gap-4">
+      <div *ngFor="let piloto of pilotos()">
+        
+        <section hlmCard class="bg-gray-800/50 border border-gray-700 shadow-xl rounded-xl p-6">
+          <div hlmCardHeader class="flex justify-between items-start">
+            <h3 hlmCardTitle class="text-2xl font-bold text-red-500 mb-2">{{ piloto.name }} {{ piloto.surname }}</h3>
+            <span *ngIf="piloto.number" class="text-3xl font-black text-gray-500">
+              #{{ piloto.number }}
+            </span>
+          </div>
+          
+          <div hlmCardContent class="text-gray-300 space-y-4">
+            <p><span class="font-semibold text-red-400">Nacionalidad:</span> {{ piloto.nationality }}</p>
+            
+            <div class="flex flex-wrap gap-2">
+              <span *ngIf="piloto.birthday" class="px-2 py-1 bg-gray-700 rounded-md text-sm flex items-center gap-1">
+                📅 {{ piloto.birthday }}
+              </span>
+              <span *ngIf="piloto.shortName" class="px-2 py-1 bg-red-900/40 border border-red-800 text-red-300 rounded-md text-sm font-mono font-bold">
+                🏁 {{ piloto.shortName }}
+              </span>
+            </div>
+            
+            <p *ngIf="piloto.url" class="pt-2 border-t border-gray-700">
+              <a [href]="piloto.url" target="_blank" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors text-sm">
+                📖 Ver información completa en Wikipedia
+              </a>
+            </p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div *ngIf="pilotos().length === 0 && !cargando()" class="text-center text-gray-500 mt-10">
+      No hay pilotos para mostrar. Escribí un apellido arriba.
+    </div>
+
+    <div *ngIf="grilla().length > 0 && !cargando()" class="mt-12">
+  <h2 class="text-2xl font-bold text-center mb-6 text-gray-400">Grilla de Clásicos</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div *ngFor="let piloto of grilla(); let i = index" 
+        class="flex items-center p-3 bg-gray-900 border-l-4 border-red-500 rounded-r-lg">
+      <span class="text-2xl font-black text-gray-600 mr-4 w-10">{{ i + 1 }}</span>
+      <div class="flex-1">
+        <p class="font-bold text-white">{{ piloto.name }} {{ piloto.surname }}</p>
+        <p class="text-xs text-red-400">{{ piloto.nationality }}</p>
+      </div>
+    </div>
+  </div>
+</div>
